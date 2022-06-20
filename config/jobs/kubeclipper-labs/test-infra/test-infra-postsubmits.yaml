@@ -1,0 +1,34 @@
+periodics:
+- cron: "17 * * * *"  # Every hour at 17 minutes past the hour
+  name: ci-test-infra-label-sync
+  labels:
+    app: label-sync
+  decorate: true
+  spec:
+    containers:
+    - name: label-sync
+      image: gcr.io/k8s-prow/label_sync:v20210809-8baaf73c0a
+      command:
+      - /app/label_sync/app.binary
+      args:
+      - --config=/etc/config/labels.yaml
+      - --confirm=true
+      - --token=/etc/github/token
+      - --endpoint=http://ghproxy.default.svc.cluster.local
+      - --endpoint=https://api.github.com
+      - --debug
+      - --only=kubeclipper-labs/kubeclipper,kubeclipper-labs/community,kubeclipper-labs/console
+      volumeMounts:
+      - name: oauth
+        mountPath: /etc/github
+        readOnly: true
+      - name: config
+        mountPath: /etc/config
+        readOnly: true
+    volumes:
+    - name: oauth
+      secret:
+        secretName: github-token
+    - name: config
+      configMap:
+        name: label-config

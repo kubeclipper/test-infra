@@ -1,0 +1,159 @@
+prowjob_namespace: "default"
+pod_namespace: test-pods
+log_level: debug
+
+plank:
+  job_url_prefix_config:
+    "*": https://prow.kubeclipper.top/view/
+  report_templates:
+    '*': >-
+        [Full PR test history](https://prow.kubeclipper.top/pr-history?org={{.Spec.Refs.Org}}&repo={{.Spec.Refs.Repo}}&pr={{with index .Spec.Refs.Pulls 0}}{{.Number}}{{end}}).
+        [Your PR dashboard](https://prow.kubeclipper.top/pr?query=is:pr+state:open+author:{{with index .Spec.Refs.Pulls 0}}{{.Author}}{{end}}).
+  default_decoration_configs:
+    "*":
+      gcs_configuration:
+        bucket: s3://prow-logs
+        path_strategy: explicit
+      s3_credentials_secret: s3-credentials
+      utility_images:
+        clonerefs: gcr.io/k8s-prow/clonerefs:v20210526-84965e233e
+        entrypoint: gcr.io/k8s-prow/entrypoint:v20210526-84965e233e
+        initupload: gcr.io/k8s-prow/initupload:v20210526-84965e233e
+        sidecar: gcr.io/k8s-prow/sidecar:v20210526-84965e233e
+
+deck:
+  spyglass:
+    lenses:
+    - lens:
+        name: metadata
+      required_files:
+      - started.json|finished.json
+    - lens:
+        config:
+        name: buildlog
+      required_files:
+      - build-log.txt
+    - lens:
+        name: junit
+      required_files:
+      - .*/junit.*\.xml
+    - lens:
+        name: podinfo
+      required_files:
+      - podinfo.json
+
+# slack_reporter_configs:
+#   '*':
+#     job_types_to_report:
+#     - postsubmit
+#     - presubmit
+#     - periodic
+#     - batch
+#     job_states_to_report:
+#     - failure
+#     - error
+#     channel: prow
+#     report_template: 'Job *{{.Spec.Job}}* of type *{{.Spec.Type}}* ended with state *{{.Status.State}}*. <{{.Status.URL}}|View logs>'
+
+github_reporter:
+  job_types_to_report:
+  - presubmit
+  - postsubmit
+
+tide:
+  blocker_label: tide/merge-blocker
+  squash_label: tide/merge-method-squash
+  rebase_label: tide/merge-method-rebase
+  merge_label: tide/merge-method-merge
+  merge_method:
+    kubeclipper-labs/community: squash
+  target_url: https://prow.kubeclipper.top
+  queries:
+  - orgs:
+    - kubeclipper-labs
+    labels:
+    - lgtm
+    - approved
+    missingLabels:
+    - do-not-merge
+    - do-not-merge/contains-merge-commits
+    - do-not-merge/hold
+    - do-not-merge/invalid-commit-message
+    - do-not-merge/invalid-owners-file
+    - do-not-merge/work-in-progress
+    - needs-rebase
+
+decorate_all_jobs: true
+
+# presets:
+# - labels:
+#     preset-go-build-cache: "true"
+#   volumeMounts:
+#   - mountPath: /home/prow/go/pkg
+#     name: build-cache
+#     subPath: gomod
+#   volumes:
+#   - name: build-cache
+#     hostPath:
+#       path: /tmp/prow/cache
+#       type: DirectoryOrCreate
+# - labels:
+#     preset-docker-sock: "true"
+#   volumes:
+#   - name: docker-sock
+#     hostPath:
+#       path: /var/run/docker.sock
+#       type: ""
+#   volumeMounts:
+#   - mountPath: /var/run/docker.sock
+#     name: docker-sock
+# - labels:
+#     preset-docker-credentials: "true"
+#   volumes:
+#   - name: docker-credential
+#     secret:
+#       secretName: docker
+#   volumeMounts:
+#   - mountPath: /home/.docker/config.json
+#     subPath: config.json
+#     name: docker-credential
+# - labels:
+#     preset-docker-multiarch: "true"
+#   volumes:
+#   - name: docker-multiarch
+#     hostPath:
+#       path: /root/.docker/buildx
+#       type: ""
+#   volumeMounts:
+#   - name: docker-multiarch
+#     mountPath: /home/.docker/buildx
+# - labels:
+#     preset-github-credentials: "true"
+#   volumes:
+#   - name: github-credential
+#     secret:
+#       secretName: github-token
+#   volumeMounts:
+#   - name: github-credential
+#     mountPath: /home/.github/oauth
+#     subPath: oauth
+# - labels:
+#     preset-preivew-cluster-kubeconfig: "true"
+#   volumes:
+#   - name: preview-cluster-credential
+#     secret:
+#       secretName: preview-cluster-kubeconfig
+#   volumeMounts:
+#   - mountPath: /home/.kube/preview-kubeconfig
+#     subPath: preview-kubeconfig
+#     name: preview-cluster-credential
+# - labels:
+#     preset-preview-deployment-template: "true"
+#   volumes:
+#   - name: preview-deployment-template
+#     configMap:
+#       name: preview-deployment-template
+#   volumeMounts:
+#   - mountPath: /home/.template/template.yaml
+#     name: preview-deployment-template
+#     subPath: template.yaml

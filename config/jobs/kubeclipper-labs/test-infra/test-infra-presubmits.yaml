@@ -1,0 +1,36 @@
+presubmits:
+  kubesphere/test-infra:
+  - name: pull-test-infra-yamllint
+    always_run: true
+    decorate: true
+    spec:
+      containers:
+      - image: quay.io/kubermatic/yamllint:0.1
+        command:
+        - yamllint
+        - -c
+        - config/jobs/.yamllint.conf
+        - config/jobs
+        - config/prow/cluster
+
+  - name: pull-test-infra-prow-checkconfig
+    decorate: true
+    run_if_changed: '^(config/prow/(config|plugins).yaml$|config/jobs/.*.yaml$)'
+    spec:
+      containers:
+      - image: gcr.io/k8s-prow/checkconfig:v20210712-9b395cf3fb
+        command:
+        - /checkconfig
+        args:
+        - --config-path=config/prow/config.yaml
+        - --job-config-path=config/jobs
+        - --plugin-config=config/prow/plugins.yaml
+        - --strict
+        - --warnings=mismatched-tide-lenient
+        - --warnings=tide-strict-branch
+        - --warnings=needs-ok-to-test
+        - --warnings=validate-owners
+        - --warnings=missing-trigger
+        - --warnings=validate-urls
+        - --warnings=unknown-fields
+        - --warnings=duplicate-job-refs

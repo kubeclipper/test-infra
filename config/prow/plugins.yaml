@@ -1,0 +1,97 @@
+# Plugin repository allowlist.
+# Keys: Full repo name: "org/repo".
+# Values: List of plugins to run against the repo.
+
+---
+triggers:
+- repos:
+  - kubeclipper-labs
+
+config_updater:
+  maps:
+    config/prow/config.yaml:
+      name: config
+    config/prow/plugins.yaml:
+      name: plugins
+    config/jobs/**/*.yaml:
+      name: job-config
+      gzip: true
+
+lgtm:
+- repos:
+  - kubeclipper-labs/community
+  store_tree_hash: true
+
+# Lower bounds in number of lines changed; XS is assumed to be zero.
+size:
+  s:   10
+  m:   30
+  l:   100
+  xl:  500
+  xxl: 1000
+
+label:
+  additional_labels:
+    # These labels are used to make Tide merge with a non-default merge method
+    - tide/merge-method-merge
+    - tide/merge-method-rebase
+    - tide/merge-method-squash
+
+# repo_milestone:
+#   '':
+#     maintainers_id: 4979590
+#     maintainers_team: milestone-maintainers
+
+approve:
+  - repos:
+      - kubeclipper-labs/community
+    require_self_approval: true
+
+plugins:
+  kubeclipper-labs:
+    plugins:
+    - approve
+    - assign
+    - cla
+    - golint
+    - help
+    - hold
+    - label
+    - lgtm
+    - pony
+    - cat
+    - lifecycle
+    - retitle
+    - size
+    - skip
+    - slackevents
+    - trigger
+    - verify-owners
+    - wip
+
+  kubeclipper-labs/kubeclipper:
+    plugins:
+    - milestone
+    - milestonestatus
+    - release-note
+    - require-matching-label
+
+  kubeclipper-labs/console:
+    plugins:
+    - milestone
+    - milestonestatus
+    - release-note
+    - require-matching-label
+  kubeclipper-labs/test-infra:
+    plugins:
+      - config-updater
+
+external_plugins:
+  kubeclipper-labs:
+  - name: cherrypicker
+    events:
+    - issue_comment
+    - pull_request
+  - name: needs-rebase
+    events:
+    - pull_request
