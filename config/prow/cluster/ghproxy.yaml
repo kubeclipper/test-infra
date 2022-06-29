@@ -50,7 +50,7 @@ spec:
         image: gcr.io/k8s-prow/ghproxy:v20210615-cf184f2204
         args:
         - --cache-dir=/cache
-        - --cache-sizeGB=99
+        - --cache-sizeGB=50
         - --push-gateway=pushgateway
         - --serve-metrics=true
         ports:
