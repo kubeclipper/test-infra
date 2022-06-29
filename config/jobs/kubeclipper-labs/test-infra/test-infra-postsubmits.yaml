@@ -1,5 +1,5 @@
 periodics:
-- cron: "17 * * * *"  # Every hour at 17 minutes past the hour
+- cron: "6 2-23/6 * * *"
   name: ci-test-infra-label-sync
   labels:
     app: label-sync

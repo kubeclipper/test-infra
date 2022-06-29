@@ -22,7 +22,7 @@ update-label-config:
 	kubectl -n test-pods create configmap label-config --from-file=labels.yaml=labels.yaml --dry-run -o yaml | kubectl -n test-pods replace configmap label-config -f -
 
 deploy:
-	kubectl -n default apply -f cluster/ --prune -l app.kubernetes.io/part-of=prow 
+	kubectl apply -f cluster/ --prune -l app.kubernetes.io/part-of=prow 
 
 update-job-config:
 	./update-job-config.sh ../jobs/

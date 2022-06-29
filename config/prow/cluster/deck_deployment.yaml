@@ -48,7 +48,7 @@ spec:
         - --tide-url=http://tide/
         - --hook-url=http://hook:8888/plugin-help
         - --plugin-config=/etc/plugins/plugins.yaml
-        - --redirect-http-to=prow.kubeclipper.top
+        - --redirect-http-to=prow.kubeclipper.io
         - --config-path=/etc/config/config.yaml
         - --job-config-path=/etc/job-config
         - --spyglass=true

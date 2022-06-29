@@ -4,11 +4,11 @@ log_level: debug
 
 plank:
   job_url_prefix_config:
-    "*": https://prow.kubeclipper.top/view/
+    "*": http://prow.kubeclipper.io/view/
   report_templates:
     '*': >-
-        [Full PR test history](https://prow.kubeclipper.top/pr-history?org={{.Spec.Refs.Org}}&repo={{.Spec.Refs.Repo}}&pr={{with index .Spec.Refs.Pulls 0}}{{.Number}}{{end}}).
-        [Your PR dashboard](https://prow.kubeclipper.top/pr?query=is:pr+state:open+author:{{with index .Spec.Refs.Pulls 0}}{{.Author}}{{end}}).
+        [Full PR test history](http://prow.kubeclipper.io/pr-history?org={{.Spec.Refs.Org}}&repo={{.Spec.Refs.Repo}}&pr={{with index .Spec.Refs.Pulls 0}}{{.Number}}{{end}}).
+        [Your PR dashboard](http://prow.kubeclipper.io/pr?query=is:pr+state:open+author:{{with index .Spec.Refs.Pulls 0}}{{.Author}}{{end}}).
   default_decoration_configs:
     "*":
       gcs_configuration:
@@ -67,7 +67,7 @@ tide:
   merge_label: tide/merge-method-merge
   merge_method:
     kubeclipper-labs/community: squash
-  target_url: https://prow.kubeclipper.top
+  target_url: http://prow.kubeclipper.io
   queries:
   - orgs:
     - kubeclipper-labs
