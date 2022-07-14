@@ -39,10 +39,10 @@ label:
     - tide/merge-method-rebase
     - tide/merge-method-squash
 
-# repo_milestone:
-#   '':
-#     maintainers_id: 4979590
-#     maintainers_team: milestone-maintainers
+repo_milestone:
+  '':
+    maintainers_id: 6346056
+    maintainers_team: milestone-maintainers
 
 approve:
   - repos:
@@ -70,6 +70,7 @@ plugins:
     - trigger
     - verify-owners
     - wip
+    - dco
 
   kubeclipper-labs/kubeclipper:
     plugins:
