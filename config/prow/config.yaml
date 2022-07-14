@@ -67,6 +67,8 @@ tide:
   merge_label: tide/merge-method-merge
   merge_method:
     kubeclipper-labs/community: squash
+    kubeclipper-labs/kubeclipper: squash
+    kubeclipper-labs/console: squash
   target_url: http://prow.kubeclipper.io
   queries:
   - orgs:
@@ -82,7 +84,21 @@ tide:
     - do-not-merge/invalid-owners-file
     - do-not-merge/work-in-progress
     - needs-rebase
-
+  - repos:
+    - kubeclipper-labs/kubeclipper
+    - kubeclipper-labs/console
+    labels:
+    - lgtm
+    - approved
+    missingLabels:
+    - do-not-merge
+    - do-not-merge/contains-merge-commits
+    - do-not-merge/hold
+    - do-not-merge/invalid-commit-message
+    - do-not-merge/invalid-owners-file
+    - do-not-merge/release-note-label-needed
+    - do-not-merge/work-in-progress
+    - needs-rebase
 decorate_all_jobs: true
 
 # presets:
