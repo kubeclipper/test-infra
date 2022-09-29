@@ -1,5 +1,5 @@
 presubmits:
-  kubeclipper-labs/test-infra:
+  kubeclipper/test-infra:
   - name: pull-test-infra-yamllint
     always_run: true
     decorate: true
