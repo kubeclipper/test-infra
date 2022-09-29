@@ -5,7 +5,7 @@
 ---
 triggers:
 - repos:
-  - kubeclipper-labs
+  - kubeclipper
 
 config_updater:
   maps:
@@ -19,9 +19,9 @@ config_updater:
 
 lgtm:
 - repos:
-  - kubeclipper-labs/community
-  - kubeclipper-labs/kubeclipper
-  - kubeclipper-labs/console
+  - kubeclipper/community
+  - kubeclipper/kubeclipper
+  - kubeclipper/console
   store_tree_hash: true
 
 # Lower bounds in number of lines changed; XS is assumed to be zero.
@@ -46,11 +46,11 @@ repo_milestone:
 
 approve:
   - repos:
-      - kubeclipper-labs/community
+      - kubeclipper/community
     require_self_approval: true
 
 plugins:
-  kubeclipper-labs:
+  kubeclipper:
     plugins:
     - approve
     - assign
@@ -72,25 +72,25 @@ plugins:
     - wip
     - dco
 
-  kubeclipper-labs/kubeclipper:
+  kubeclipper/kubeclipper:
     plugins:
     - milestone
     - milestonestatus
     - release-note
     - require-matching-label
 
-  kubeclipper-labs/console:
+  kubeclipper/console:
     plugins:
     - milestone
     - milestonestatus
     - release-note
     - require-matching-label
-  kubeclipper-labs/test-infra:
+  kubeclipper/test-infra:
     plugins:
       - config-updater
 
 external_plugins:
-  kubeclipper-labs:
+  kubeclipper:
   - name: cherrypicker
     events:
     - issue_comment

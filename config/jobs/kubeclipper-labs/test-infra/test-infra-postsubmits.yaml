@@ -17,7 +17,7 @@ periodics:
       - --endpoint=http://ghproxy.default.svc.cluster.local
       - --endpoint=https://api.github.com
       - --debug
-      - --only=kubeclipper-labs/kubeclipper,kubeclipper-labs/community,kubeclipper-labs/console
+      - --only=kubeclipper/kubeclipper,kubeclipper/community,kubeclipper/console
       volumeMounts:
       - name: oauth
         mountPath: /etc/github

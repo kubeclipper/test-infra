@@ -66,13 +66,13 @@ tide:
   rebase_label: tide/merge-method-rebase
   merge_label: tide/merge-method-merge
   merge_method:
-    kubeclipper-labs/community: squash
-    kubeclipper-labs/kubeclipper: squash
-    kubeclipper-labs/console: squash
+    kubeclipper/community: squash
+    kubeclipper/kubeclipper: squash
+    kubeclipper/console: squash
   target_url: http://prow.kubeclipper.io
   queries:
   - orgs:
-    - kubeclipper-labs
+    - kubeclipper
     labels:
     - lgtm
     - approved
@@ -85,8 +85,8 @@ tide:
     - do-not-merge/work-in-progress
     - needs-rebase
   - repos:
-    - kubeclipper-labs/kubeclipper
-    - kubeclipper-labs/console
+    - kubeclipper/kubeclipper
+    - kubeclipper/console
     labels:
     - lgtm
     - approved
