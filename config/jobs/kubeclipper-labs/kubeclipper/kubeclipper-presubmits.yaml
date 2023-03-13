@@ -2,69 +2,35 @@ presubmits:
   kubeclipper/kubeclipper:
     - name: api-test
       always_run: false
-      decorate: false
-      branches:
-        - release-1.3
+      decorate: true
       spec:
         containers:
-        - image: 'docker.io/appleboy/drone-ssh:1.6.1'
-          env:
-          - name: PLUGIN_HOST
-            valueFrom:
-              secretKeyRef:
-                name: chj-remote
-                key: host
-          - name: PLUGIN_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: chj-remote
-                key: username
-          - name: PLUGIN_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: chj-remote
-                key: password
-          - name: PLUGIN_PORT
-            valueFrom:
-              secretKeyRef:
-                name: chj-remote
-                key: port
-          - name: PLUGIN_SCRIPT
-            value: set -e;sh /root/apitest/apitest.sh
-          - name: PLUGIN_COMMAND_TIMEOUT
-            value: 2h
-          name: api-test
-    - name: prepare
-      always_run: false
-      decorate: false
-      branches:
-        - release-1.3
-      spec:
-        containers:
-        - image: 'docker.io/appleboy/drone-scp:1.6.1'
-          env:
-          - name: SCP_HOST
-            valueFrom:
-              secretKeyRef:
-                name: chj-remote
-                key: host
-          - name: SCP_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: chj-remote
-                key: username
-          - name: SCP_PORT
-            valueFrom:
-              secretKeyRef:
-                name: chj-remote
-                key: port
-          - name: SCP_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: chj-remote
-                key: password
-          - name: SCP_SOURCE
-            value: ../kubeclipper
-          - name: SCP_TARGET
-            value: /root/apitest/kubeclipper
-          name: prepare
+          - command: ["/bin/bash", "-c"]
+            args:
+              - set -e;
+                mkdir -p ~/.ssh;
+                chmod 700 ~/.ssh;
+                echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config;
+                echo "$SSH_PRIVATE_KEY_STAGING" > key;
+                chmod 600 key;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "rm -rf /root/apitest/kubeclipper";
+                scp -i key -P $DEPLOY_STAGING_SSH_PORT -r ../kubeclipper  root@$DEPLOY_STAGING_SSH_HOST:/root/apitest/kubeclipper;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "sh /root/apitest/apitest.sh";
+            image: 'docker.io/kroniak/ssh-client:latest'
+            env:
+              - name: DEPLOY_STAGING_SSH_HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: host
+              - name: DEPLOY_STAGING_SSH_PORT
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: port
+              - name: SSH_PRIVATE_KEY_STAGING
+                valueFrom:
+                  secretKeyRef:
+                    name: ssh-key
+                    key: key
+            name: api-test
