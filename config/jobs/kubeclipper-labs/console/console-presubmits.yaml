@@ -15,7 +15,7 @@ presubmits:
                 chmod 600 key;
                 ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "rm -rf /root/console";
                 scp -i key -P $DEPLOY_STAGING_SSH_PORT -r ../console  root@$DEPLOY_STAGING_SSH_HOST:/root/console;
-                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "sh /root/deploy-test.sh";
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "sh /root/deploy.sh";
             image: 'docker.io/kroniak/ssh-client:latest'
             env:
               - name: DEPLOY_STAGING_SSH_HOST
