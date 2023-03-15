@@ -1,0 +1,135 @@
+presubmits:
+  kubeclipper/console:
+    - name: e2e-test-deploy
+      always_run: false
+      decorate: true
+      spec:
+        containers:
+          - command: ["/bin/bash", "-c"]
+            args:
+              - set -e;
+                mkdir -p ~/.ssh;
+                chmod 700 ~/.ssh;
+                echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config;
+                echo "$SSH_PRIVATE_KEY_STAGING" > key;
+                chmod 600 key;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "rm -rf /root/console";
+                scp -i key -P $DEPLOY_STAGING_SSH_PORT -r ../console  root@$DEPLOY_STAGING_SSH_HOST:/root/console;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "sh /root/deploy.sh";
+            image: 'docker.io/kroniak/ssh-client:latest'
+            env:
+              - name: DEPLOY_STAGING_SSH_HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: host
+              - name: DEPLOY_STAGING_SSH_PORT
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: port
+              - name: SSH_PRIVATE_KEY_STAGING
+                valueFrom:
+                  secretKeyRef:
+                    name: ssh-key
+                    key: key
+            name: e2e-test-deploy
+    - name: e2e-test-cluster
+      always_run: false
+      decorate: true
+      spec:
+        containers:
+          - command: ["/bin/bash", "-c"]
+            args:
+              - set -e;
+                mkdir -p ~/.ssh;
+                chmod 700 ~/.ssh;
+                echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config;
+                echo "$SSH_PRIVATE_KEY_STAGING" > key;
+                chmod 600 key;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "rm -rf /root/console-cluster";
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "sh /root/e2e-test.sh cluster";
+            image: 'docker.io/kroniak/ssh-client:latest'
+            env:
+              - name: DEPLOY_STAGING_SSH_HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: host
+              - name: DEPLOY_STAGING_SSH_PORT
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: port
+              - name: SSH_PRIVATE_KEY_STAGING
+                valueFrom:
+                  secretKeyRef:
+                    name: ssh-key
+                    key: key
+            name: e2e-test-cluster
+    - name: e2e-test-online
+      always_run: false
+      decorate: true
+      spec:
+        containers:
+          - command: ["/bin/bash", "-c"]
+            args:
+              - set -e;
+                mkdir -p ~/.ssh;
+                chmod 700 ~/.ssh;
+                echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config;
+                echo "$SSH_PRIVATE_KEY_STAGING" > key;
+                chmod 600 key;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "rm -rf /root/console-online";
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "sh /root/e2e-test.sh online";
+            image: 'docker.io/kroniak/ssh-client:latest'
+            env:
+              - name: DEPLOY_STAGING_SSH_HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: host
+              - name: DEPLOY_STAGING_SSH_PORT
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: port
+              - name: SSH_PRIVATE_KEY_STAGING
+                valueFrom:
+                  secretKeyRef:
+                    name: ssh-key
+                    key: key
+            name: e2e-test-online
+    - name: e2e-test-others
+      always_run: false
+      decorate: true
+      spec:
+        containers:
+          - command: ["/bin/bash", "-c"]
+            args:
+              - set -e;
+                mkdir -p ~/.ssh;
+                chmod 700 ~/.ssh;
+                echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config;
+                echo "$SSH_PRIVATE_KEY_STAGING" > key;
+                chmod 600 key;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "rm -rf /root/console-others";
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "sh /root/e2e-test.sh others";
+            image: 'docker.io/kroniak/ssh-client:latest'
+            env:
+              - name: DEPLOY_STAGING_SSH_HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: host
+              - name: DEPLOY_STAGING_SSH_PORT
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: port
+              - name: SSH_PRIVATE_KEY_STAGING
+                valueFrom:
+                  secretKeyRef:
+                    name: ssh-key
+                    key: key
+            name: e2e-test-others
