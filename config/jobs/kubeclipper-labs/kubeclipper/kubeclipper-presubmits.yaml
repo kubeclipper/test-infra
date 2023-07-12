@@ -34,3 +34,38 @@ presubmits:
                     name: ssh-key
                     key: key
             name: api-test
+
+    - name: aio-deploy
+      always_run: false
+      decorate: true
+      spec:
+        containers:
+          - command: ["/bin/bash", "-c"]
+            args:
+              - set -e;
+                mkdir -p ~/.ssh;
+                chmod 700 ~/.ssh;
+                echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config;
+                echo "$SSH_PRIVATE_KEY_STAGING" > key;
+                chmod 600 key;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "rm -rf /root/aiotest/kubeclipper";
+                scp -i key -P $DEPLOY_STAGING_SSH_PORT -r ../kubeclipper  root@$DEPLOY_STAGING_SSH_HOST:/root/aiotest/kubeclipper;
+                ssh -i key -p $DEPLOY_STAGING_SSH_PORT root@$DEPLOY_STAGING_SSH_HOST "sh /root/aiotest/aiodeploy.sh";
+            image: 'docker.io/kroniak/ssh-client:latest'
+            env:
+              - name: DEPLOY_STAGING_SSH_HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: host
+              - name: DEPLOY_STAGING_SSH_PORT
+                valueFrom:
+                  secretKeyRef:
+                    name: chj-remote
+                    key: port
+              - name: SSH_PRIVATE_KEY_STAGING
+                valueFrom:
+                  secretKeyRef:
+                    name: ssh-key
+                    key: key
+            name: aio-deploy
