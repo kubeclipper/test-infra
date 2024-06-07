@@ -28,4 +28,4 @@ find "${JOB_CONFIG_PATH}" -name "*.yaml" | \
     tr '\n' ' ' | \
     cat <(echo -n "kubectl -n default create cm job-config --dry-run -o yaml ") - | \
     sh | \
-    kubectl -n default replace -f - 
+    kubectl -n default apply -f -

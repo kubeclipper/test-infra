@@ -21,6 +21,7 @@ metadata:
     app.kubernetes.io/part-of: prow
   name: ghproxy
 spec:
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
