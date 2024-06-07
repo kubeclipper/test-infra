@@ -13,16 +13,17 @@
 # limitations under the License.
 
 update-config:
-	kubectl -n default create configmap config --from-file=config.yaml=config.yaml --dry-run -o yaml | kubectl -n default replace configmap config -f -
+	kubectl -n default create configmap config --from-file=config.yaml=config.yaml --dry-run -o yaml | kubectl -n default apply -f -
 
 update-plugins:
-	kubectl -n default create configmap plugins --from-file=plugins.yaml=plugins.yaml --dry-run -o yaml | kubectl -n default replace configmap plugins -f -
+	kubectl -n default create configmap plugins --from-file=plugins.yaml=plugins.yaml --dry-run -o yaml | kubectl -n default apply -f -
 
 update-label-config:
-	kubectl -n test-pods create configmap label-config --from-file=labels.yaml=labels.yaml --dry-run -o yaml | kubectl -n test-pods replace configmap label-config -f -
+	kubectl apply -f cluster/test-pods_namespace.yaml # 单独提前创建 ns，否则批量 apply 可能会报错
+	kubectl -n test-pods create configmap label-config --from-file=labels.yaml=labels.yaml --dry-run -o yaml | kubectl -n test-pods apply -f -
 
 deploy:
-	kubectl apply -f cluster/ --prune -l app.kubernetes.io/part-of=prow 
+	kubectl apply -f cluster/ --prune -l app.kubernetes.io/part-of=prow
 
 update-job-config:
 	./update-job-config.sh ../jobs/
